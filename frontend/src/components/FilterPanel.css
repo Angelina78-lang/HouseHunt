@@ -1,0 +1,30 @@
+.horizontal-slider {
+    width: 100%;
+    height: 10px;
+    background: #e9ecef;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+.example-thumb {
+    top: -5px;
+    width: 20px;
+    height: 20px;
+    background: #0d6efd;
+    color: #fff;
+    border-radius: 50%;
+    cursor: grab;
+    outline: none;
+}
+
+.example-track-0 {
+    background: #e9ecef;
+}
+
+.example-track-1 {
+    background: #0d6efd;
+}
+
+.example-track-2 {
+    background: #e9ecef;
+}

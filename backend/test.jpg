@@ -1,0 +1,114 @@
+import express from 'express';
+import path from 'path';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import propertyRoutes from './routes/propertyRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+
+// Load env vars
+dotenv.config();
+
+// Connect to database
+connectDB().then(async () => {
+  // Auto-seed for memory server if database is empty
+  try {
+    const { default: User } = await import('./models/User.js');
+    const { default: Property } = await import('./models/Property.js');
+    const { default: bcrypt } = await import('bcryptjs');
+
+    const adminExists = await User.findOne({ email: 'admin@househunt.com' });
+    if (!adminExists) {
+      console.log('Database empty: Auto-seeding initial data...');
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash('123456', salt);
+
+      const users = await User.insertMany([
+        { name: 'Admin User', email: 'admin@househunt.com', password: hashedPassword, role: 'admin' },
+        { name: 'John Doe', email: 'john@example.com', password: hashedPassword, role: 'user' },
+        { name: 'Jane Smith', email: 'jane@example.com', password: hashedPassword, role: 'user' },
+      ]);
+
+      await Property.insertMany([
+        {
+          title: 'Modern Downtown Loft',
+          description: 'A beautiful modern loft in the heart of the city.',
+          price: 150,
+          location: { address: '123 Main St, New York, NY', lat: 40.7128, lng: -74.006 },
+          images: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=800'],
+          bedrooms: 1, bathrooms: 1, amenities: ['WiFi', 'Air Conditioning', 'Kitchen'],
+          availableFrom: new Date(), furnished: true, petFriendly: false, ownerId: users[1]._id, status: 'approved',
+        },
+        {
+          title: 'Luxury Beachfront Villa',
+          description: 'Wake up to the sound of waves.',
+          price: 450,
+          location: { address: '789 Ocean Way, Miami, FL', lat: 25.7617, lng: -80.1918 },
+          images: ['https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?q=80&w=800'],
+          bedrooms: 4, bathrooms: 3, amenities: ['Pool', 'Beach'],
+          availableFrom: new Date(), furnished: true, petFriendly: true, ownerId: users[1]._id, status: 'approved',
+        },
+        {
+          title: 'Cozy Suburb Home',
+          description: 'Perfect for families, 3 bedrooms with a large backyard.',
+          price: 120,
+          location: { address: '456 Oak Ave, Austin, TX', lat: 30.2672, lng: -97.7431 },
+          images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800'],
+          bedrooms: 3, bathrooms: 2, amenities: ['WiFi', 'Parking', 'Pool'],
+          availableFrom: new Date(), furnished: false, petFriendly: true, ownerId: users[2]._id, status: 'approved',
+        },
+        {
+          title: 'Chic Studio Apartment',
+          description: 'Compact, modern, and perfectly located.',
+          price: 110,
+          location: { address: '500 Market St, San Francisco, CA', lat: 37.7749, lng: -122.4194 },
+          images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800'],
+          bedrooms: 1, bathrooms: 1, amenities: ['WiFi', 'Gym Setup', 'Kitchen'],
+          availableFrom: new Date(), furnished: true, petFriendly: false, ownerId: users[1]._id, status: 'approved',
+        },
+        {
+          title: 'Penthouse Suite',
+          description: 'Panoramic views from the 50th floor.',
+          price: 1200,
+          location: { address: '1 Sky Tower, Chicago, IL', lat: 41.8781, lng: -87.6298 },
+          images: ['https://images.unsplash.com/photo-1502672260266-1c1f552378c3?q=80&w=800'],
+          bedrooms: 3, bathrooms: 3, amenities: ['Gym', 'Valet', 'Balcony', 'WiFi'],
+          availableFrom: new Date(), furnished: true, petFriendly: false, ownerId: users[0]._id, status: 'approved',
+        }
+      ]);
+      console.log('Database seeded automatically.');
+    }
+  } catch (error) {
+    console.error('Auto-seed failed', error);
+  }
+});
+
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/properties', propertyRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/upload', uploadRoutes);
+
+app.get('/', (req, res) => {
+  res.send('HouseHunt API is running...');
+});
+
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+// Error Middleware
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
