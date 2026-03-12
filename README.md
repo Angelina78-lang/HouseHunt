@@ -1,111 +1,307 @@
-# HouseHunt - MERN Boilerplate
+# HouseHunt – MERN Real Estate Booking Platform
 
-A complete, feature-rich real estate booking platform built with the MERN stack (MongoDB, Express, React, Node.js). 
-Designed to be demo-ready for hackathons and SkillWallet.
+HouseHunt is a full-stack real estate booking platform built with the **MERN stack (MongoDB, Express, React, Node.js)**.
+The application allows users to explore properties, book stays, and manage listings through a role-based admin system.
 
-## Features Included
-- **User & Admin Auth**: Full JWT authentication. Roles determine dashboard access.
-- **Virtual Tours & Maps**: Leaflet maps for properties and YouTube/Vimeo embeds.
-- **Advanced Filters**: Location keyword search, price slider, bedrooms, amenities checkboxes.
-- **Booking Calendar**: React-datepicker integration with automatic price calculation and date-conflict checking.
-- **Favorites**: Click the heart on a property card to save it.
-- **Admin Workflow**: Pending properties require an Admin to approve before showing publicly.
-- **Charts/Analytics**: Admin dashboard has a Chart.js bar chart for property location pricing.
-- **Responsive Design**: Modern UI utilizing Bootstrap 5.
+This project was built as a **demo-ready platform for hackathons and SkillWallet submissions**.
 
 ---
 
-## 🚀 Setup & Run Locally
+# ✨ Features
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- MongoDB Database (Local or Atlas)
-- Cloudinary Account (for Image Uploads)
+### 🔐 Authentication & Roles
 
-### 1. Backend Setup
+* JWT-based authentication
+* User and Admin roles
+* Secure protected routes
 
-1. Open a terminal and navigate to the backend folder:
-   ```bash
-   cd backend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file from the example:
-   ```bash
-   cp .env.example .env
-   ```
-4. Update the `.env` file with your credentials:
-   - `MONGO_URI`: Your MongoDB connection string.
-   - `JWT_SECRET`: Any secret string (e.g. `mysecret123`).
-   - `CLOUDINARY_*`: Find these in your Cloudinary Dashboard.
+### 🏠 Property Listings
 
-5. **Seed the Database** with 10 sample properties and an Admin user:
-   ```bash
-   npm run seed
-   ```
-   *Logs: `Admin Email: admin@househunt.com`, `Password: 123456`*
+* View modern property cards
+* Image gallery and property details
+* Location information and pricing
 
-6. Start the backend DEV server:
-   ```bash
-   npm run dev
-   ```
-   *Server runs on `http://localhost:5000`*
+### 🗺️ Maps & Virtual Tours
 
-### 2. Frontend Setup
+* Leaflet map integration
+* Property location visualization
 
-1. Open a **new** terminal and navigate to the frontend folder:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies (if you haven't already):
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-3. Start the Vite React app:
-   ```bash
-   npm run dev
-   ```
-   *App opens on `http://localhost:3000`*
+### 🔎 Advanced Filtering
 
----
+Users can filter properties by:
 
-## 🌍 Deployment Options
+* Location search
+* Price range
+* Bedrooms
+* Amenities
 
-### Recommended Stack: Render (Backend) + Vercel (Frontend)
+### 📅 Booking System
 
-**Deploying the Backend on Render:**
-1. Create a "Web Service" on [Render.com](https://render.com).
-2. Connect your GitHub repository.
-3. Configure the settings:
-   - Root Directory: `backend`
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-4. Add all your `.env` variables under Environment Variables in Render.
-5. Deploy and grab the Render URL (e.g. `https://househunt-api.onrender.com`).
+* React Datepicker booking calendar
+* Automatic price calculation
+* Prevents date conflicts
 
-**Deploying the Frontend on Vercel:**
-1. Import your GitHub repository to [Vercel.com](https://vercel.com).
-2. Set the Root Directory to `frontend`.
-3. Before deploying, you need to configure API routes to point to the remote Backend instead of `localhost`.
-   - Update `axiosConfig.js` to point to the remote backend:
-     ```javascript
-     const instance = axios.create({
-       baseURL: 'https://househunt-api.onrender.com', // Your deployed Render link
-     });
-     ```
-4. Deploy the frontend on Vercel.
+### ❤️ Favorites
 
->(Optional) **Heroku Deployment for Backend**:
-If you prefer Heroku, create a `Procfile` in the `backend` folder containing: `web: node server.js`. Deploy the `backend` folder and add config vars in Heroku.
+* Save properties using the heart icon
+
+### 🧑‍💼 Admin Dashboard
+
+Admins can:
+
+* Approve pending property listings
+* View analytics
+* Monitor platform usage
+
+### 📊 Analytics
+
+* Chart.js integration
+* Property location pricing visualization
+
+### 📱 Responsive UI
+
+* Built with **Bootstrap 5**
+* Mobile friendly layout
 
 ---
 
-## 🔑 Initial Admin Access
-After running the `npm run seed` command, you can login with:
-- **Email**: `admin@househunt.com`
-- **Password**: `123456`
-- **Role**: Admin (can approve properties and view stats)
+# 🧱 Tech Stack
 
-Regular User accounts: `john@example.com` or `jane@example.com` with password `123456`.
+**Frontend**
+
+* React (Vite)
+* React Router
+* Axios
+* Bootstrap 5
+* React Datepicker
+* Chart.js
+* Leaflet
+
+**Backend**
+
+* Node.js
+* Express.js
+* JWT Authentication
+* Multer (image uploads)
+
+**Database**
+
+* MongoDB / MongoDB Memory Server
+
+---
+
+# 🚀 Live Deployment
+
+### Frontend
+
+https://househunt-5.onrender.com
+
+### Backend API
+
+https://househunt-4.onrender.com
+
+---
+
+# 💻 Running the Project Locally
+
+## 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/Angelina78-lang/HouseHunt.git
+cd HouseHunt
+```
+
+---
+
+# Backend Setup
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file:
+
+```
+PORT=5000
+JWT_SECRET=your_secret_key
+```
+
+Start the backend:
+
+```bash
+npm run dev
+```
+
+Backend will run on:
+
+```
+http://localhost:5000
+```
+
+---
+
+# Frontend Setup
+
+Open a new terminal:
+
+```bash
+cd frontend
+npm install --legacy-peer-deps
+npm run dev
+```
+
+Frontend will run on:
+
+```
+http://localhost:3000
+```
+
+---
+
+# 🔑 Demo Login Accounts
+
+### Admin Account
+
+Email
+
+```
+admin@househunt.com
+```
+
+Password
+
+```
+123456
+```
+
+### User Accounts
+
+Email
+
+```
+john@example.com
+```
+
+Password
+
+```
+123456
+```
+
+or
+
+Email
+
+```
+jane@example.com
+```
+
+Password
+
+```
+123456
+```
+
+---
+
+# ⚙️ Deployment
+
+The application is deployed using **Render**.
+
+### Backend Deployment
+
+1. Create a **Render Web Service**
+2. Root Directory:
+
+```
+backend
+```
+
+3. Build Command:
+
+```
+npm install
+```
+
+4. Start Command:
+
+```
+node server.js
+```
+
+---
+
+### Frontend Deployment
+
+1. Create a **Render Static Site**
+2. Root Directory:
+
+```
+frontend
+```
+
+3. Build Command:
+
+```
+npm install --legacy-peer-deps && npm run build
+```
+
+4. Publish Directory:
+
+```
+dist
+```
+
+---
+
+# 🧠 Database Behavior
+
+If no external MongoDB database is configured, the project automatically uses **MongoDB Memory Server**.
+
+This means:
+
+* Demo data is automatically seeded
+* Properties and users are available instantly
+* Data resets if the server restarts
+
+---
+
+# 📂 Project Structure
+
+```
+HouseHunt
+│
+├── backend
+│   ├── config
+│   ├── models
+│   ├── routes
+│   ├── middleware
+│   └── server.js
+│
+├── frontend
+│   ├── src
+│   ├── components
+│   ├── pages
+│   └── context
+│
+└── README.md
+```
+
+---
+
+# 📌 Future Improvements
+
+* Persistent MongoDB Atlas database
+* Payment integration
+* Email notifications
+* Real-time booking updates
+* Property reviews and ratings
+
+---
+
+# 👨‍💻 Author
+
+Developed as a **MERN full-stack demo project** for learning and SkillWallet submission.
+
+---
