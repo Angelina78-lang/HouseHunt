@@ -14,15 +14,16 @@ dotenv.config();
 
 // Connect to database
 connectDB().then(async () => {
-  // Auto-seed for memory server if database is empty
   try {
     const { default: User } = await import('./models/User.js');
     const { default: Property } = await import('./models/Property.js');
     const { default: bcrypt } = await import('bcryptjs');
 
     const adminExists = await User.findOne({ email: 'admin@househunt.com' });
+
     if (!adminExists) {
       console.log('Database empty: Auto-seeding initial data...');
+
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash('123456', salt);
 
@@ -39,64 +40,17 @@ connectDB().then(async () => {
           price: 150,
           location: { address: '123 Main St, New York, NY', lat: 40.7128, lng: -74.006 },
           images: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=800'],
-          bedrooms: 1, bathrooms: 1, amenities: ['WiFi', 'Air Conditioning', 'Kitchen'],
-          availableFrom: new Date(), furnished: true, petFriendly: false, ownerId: users[1]._id, status: 'approved',
-        },
-        {
-          title: 'Luxury Beachfront Villa',
-          description: 'Wake up to the sound of waves.',
-          price: 450,
-          location: { address: '789 Ocean Way, Miami, FL', lat: 25.7617, lng: -80.1918 },
-          images: ['https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?q=80&w=800'],
-          bedrooms: 4, bathrooms: 3, amenities: ['Pool', 'Beach'],
-          availableFrom: new Date(), furnished: true, petFriendly: true, ownerId: users[1]._id, status: 'approved',
-        },
-        {
-          title: 'Cozy Suburb Home',
-          description: 'Perfect for families, 3 bedrooms with a large backyard.',
-          price: 120,
-          location: { address: '456 Oak Ave, Austin, TX', lat: 30.2672, lng: -97.7431 },
-          images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800'],
-          bedrooms: 3, bathrooms: 2, amenities: ['WiFi', 'Parking', 'Pool'],
-          availableFrom: new Date(), furnished: false, petFriendly: true, ownerId: users[2]._id, status: 'approved',
-        },
-        {
-          title: 'Chic Studio Apartment',
-          description: 'Compact, modern, and perfectly located.',
-          price: 110,
-          location: { address: '500 Market St, San Francisco, CA', lat: 37.7749, lng: -122.4194 },
-          images: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800'],
-          bedrooms: 1, bathrooms: 1, amenities: ['WiFi', 'Gym Setup', 'Kitchen'],
-          availableFrom: new Date(), furnished: true, petFriendly: false, ownerId: users[1]._id, status: 'approved',
-        },
-        {
-          title: 'Penthouse Suite',
-          description: 'Panoramic views from the 50th floor.',
-          price: 1200,
-          location: { address: '1 Sky Tower, Chicago, IL', lat: 41.8781, lng: -87.6298 },
-          images: ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'],
-          bedrooms: 3, bathrooms: 3, amenities: ['Gym', 'Valet', 'Balcony', 'WiFi'],
-          availableFrom: new Date(), furnished: true, petFriendly: false, ownerId: users[0]._id, status: 'approved',
-        },
-        {
-          title: 'Tranquil Forest Retreat',
-          description: 'A quiet cabin surrounded by nature.',
-          price: 250,
-          location: { address: '101 Pine Cone Ln, Denver, CO', lat: 39.7392, lng: -104.9903 },
-          images: ['https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=800&q=80'],
-          bedrooms: 2, bathrooms: 1, amenities: ['Fireplace', 'Hiking Trails', 'Kitchen'],
-          availableFrom: new Date(), furnished: true, petFriendly: true, ownerId: users[2]._id, status: 'approved',
-        },
-        {
-          title: 'Sunshine City Condo',
-          description: 'Vibrant living in the hottest neighborhood.',
-          price: 320,
-          location: { address: '222 Sunset Blvd, Los Angeles, CA', lat: 34.0522, lng: -118.2437 },
-          images: ['https://images.unsplash.com/photo-1460317442991-0ec209397118?w=800&q=80'],
-          bedrooms: 2, bathrooms: 2, amenities: ['Pool', 'Gym', 'Balcony'],
-          availableFrom: new Date(), furnished: true, petFriendly: true, ownerId: users[1]._id, status: 'approved',
+          bedrooms: 1,
+          bathrooms: 1,
+          amenities: ['WiFi', 'Air Conditioning', 'Kitchen'],
+          availableFrom: new Date(),
+          furnished: true,
+          petFriendly: false,
+          ownerId: users[1]._id,
+          status: 'approved'
         }
       ]);
+
       console.log('Database seeded automatically.');
     }
   } catch (error) {
@@ -107,8 +61,16 @@ connectDB().then(async () => {
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
+
+// ✅ Fix CORS for deployed frontend
+app.use(cors({
+  origin: [
+    "http://localhost:5173", // local Vite frontend
+    "https://househunt-5.onrender.com" // deployed frontend
+  ],
+  credentials: true
+}));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -116,12 +78,14 @@ app.use('/api/properties', propertyRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/upload', uploadRoutes);
 
+// Root route
 app.get('/', (req, res) => {
   res.send('HouseHunt API is running...');
 });
 
+// Static uploads folder
 const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Error Middleware
 app.use(notFound);
@@ -129,4 +93,6 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

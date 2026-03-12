@@ -25,20 +25,23 @@ const upload = multer({
     storage
 });
 
+// Test upload route
 router.post('/test', upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
-    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
 });
 
+// Protected upload route
 router.post('/', protect, upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
-    // Return path that matches static route exposure
-    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+
+    const fileUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
     res.json({ url: fileUrl });
 });
 
